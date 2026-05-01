@@ -15,7 +15,7 @@
 <body class="bg-white min-h-screen flex items-center justify-center py-4">
 
 	<div class="text-center w-full max-w-2xl px-8">
-		
+
 		<!-- logo -->
 		<h1 class="text-7xl font-medium mx-auto flex w-fit mb-6">
 			<span class="text-blue-500 text-shadow-sm">G</span>
@@ -55,7 +55,7 @@
 		<p id="errorMsg" class="text-red-500 text-sm mt-6 hidden">Minimal 3 karakter untuk pencarian</p>
 
 		<!-- PAGINATION -->
-		<div id="pagination" class="mt-6 flex flex-wrap justify-center gap-2"></div>
+		<div id="pagination" class="mt-10 flex flex-wrap justify-center gap-2 mb-10"></div>
 	</div>
 
 	<script>
@@ -127,7 +127,7 @@
 				container.innerHTML += `
 				<div class="border border-gray-300 shadow-md rounded-lg overflow-hidden shadow-sm">
 					<img src="https://masgud.com/assets/images/products/large/${item.image}" class="w-full h-full object-cover">
-					<div class="p-2 text-sm text-gray-700 text-center">
+					<div class="p-2.5 text-md font-medium text-center bg-gray-100 border-t border-gray-300">
 					${item.code}
 					</div>
 				</div>
@@ -147,7 +147,7 @@
 
 			if (currentPage > 1) {
 				pagination.innerHTML += `
-				<button onclick="changePage(${currentPage - 1})" class="px-3 py-1 bg-gray-200 border border-gray-200 rounded">
+				<button onclick="changePage(${currentPage - 1})" class="px-3 py-1 bg-gray-100 border-2 border-gray-100 rounded hover:border-blue-500">
 					Sebelumnya
 				</button>
 				`;
@@ -156,7 +156,7 @@
 			for (let i = 1; i <= totalPages; i++) {
 				pagination.innerHTML += `
 				<button onclick="changePage(${i})"
-					class="px-3 py-1 border rounded ${i === currentPage ? 'bg-blue-500 border border-blue-600 text-white' : 'bg-gray-200 border border-gray-200'}">
+					class="px-3 py-1 border rounded ${i === currentPage ? 'bg-blue-500 border-2 border-blue-500 text-white' : 'bg-gray-100 border-gray-100 border-2 hover:border-blue-500'}">
 					${i}
 				</button>
 				`;
@@ -164,7 +164,7 @@
 
 			if (currentPage < totalPages) {
 				pagination.innerHTML += `
-				<button onclick="changePage(${currentPage + 1})" class="px-3 py-1 bg-gray-200 border border-gray-200 rounded">
+				<button onclick="changePage(${currentPage + 1})" class="px-3 py-1 bg-gray-100 border-2 border-gray-100 rounded hover:border-blue-500">
 					Berikutnya
 				</button>
 				`;
