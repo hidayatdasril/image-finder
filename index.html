@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Cari Gambar</title>
+
+	<link href="/css/output.css" rel="stylesheet">
+		
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
+
+</head>
+<body class="bg-white min-h-screen flex items-center justify-center py-4">
+
+	<div class="text-center w-full max-w-2xl px-8">
+		<!-- logo -->
+		<h1 class="text-7xl font-medium mx-auto flex w-fit mb-6">
+			<span class="text-blue-500 text-shadow-sm">G</span>
+			<span class="text-red-500 text-shadow-sm">a</span>
+			<span class="text-yellow-500 text-shadow-sm">m</span>
+			<span class="text-blue-500 text-shadow-sm">b</span>
+			<span class="text-green-500 text-shadow-sm">a</span>
+			<span class="text-red-500 text-shadow-sm">r</span>
+		</h1>
+		
+		<!-- Search Form -->
+		<form id="searchForm" class="flex items-center rounded-full focus:outline-none border border-gray-300 p-2 shadow-md">
+			<input 
+				type="text" 
+				id="searchInput"
+				placeholder="Masukkan kode produk..."
+				class="w-full px-5 py-1 border-none rounded-xl focus:outline-none text-md"
+				autocomplete="off"
+				>
+			<button 
+				type="submit"
+				class="px-6 py-1 bg-gray-100 text-gray-800 rounded-full border-transparent border-2 hover:border-blue-500 text-sm font-medium"
+				>
+				Cari
+				</button>
+		</form>
+
+		<div class="mt-6 flex items-center justify-center gap-2 text-sm text-gray-600">
+			<input type="checkbox" id="exactMatch" class="w-4 h-4" checked>
+			<label for="exactMatch">Temukan kode yang sama persis</label>
+		</div>
+
+		
+		<div id="result" class="w-full max-w-5xl mt-10 space-y-4"></div>
+		
+		<p id="errorMsg" class="text-red-500 text-sm mt-6 hidden">Minimal 3 karakter untuk pencarian</p>
+
+		<!-- PAGINATION -->
+		<div id="pagination" class="mt-6 flex flex-wrap justify-center gap-2"></div>
+	</div>
+
+	<script>
+		let data = {};
+		let index = [];
+
+		let flatResults = [];
+		let currentPage = 1;
+
+		const perPage = 2;
+
+		// NORMALIZE
+		function normalize(str) {
+			return str
+				.toUpperCase()
+				.replace(/\s+/g, '')
+				.replace(/[^A-Z0-9]/g, '');
+		}
+
+		// LOAD JSON
+		fetch('/products.json')
+			.then(res => res.json())
+			.then(json => {
+				data = json;
+
+				index = Object.keys(data).map(key => ({
+				original: key,
+				normalized: normalize(key)
+				}));
+			});
+
+		// SEARCH
+		function search(keyword, exact) {
+			if (exact) {
+				if (data[keyword]) {
+					return [{ original: keyword }];
+				}
+				return [];
+			}
+
+			const k = normalize(keyword);
+
+			return index.filter(item =>
+				item.normalized.includes(k)
+			);
+		}
+
+		// RENDER PAGE
+		function renderPage() {
+			const container = document.getElementById('result');
+			const pagination = document.getElementById('pagination');
+
+			container.innerHTML = '';
+
+			if (flatResults.length === 0) {
+				container.innerHTML = '<p class="col-span-full text-center text-gray-500">Hasil pencarian tidak ditemukan</p>';
+				pagination.innerHTML = '';
+				return;
+			}
+
+			const totalPages = Math.ceil(flatResults.length / perPage);
+
+			const start = (currentPage - 1) * perPage;
+			const end = start + perPage;
+
+			const pageItems = flatResults.slice(start, end);
+
+			pageItems.forEach(item => {
+				container.innerHTML += `
+				<div class="border border-gray-300 shadow-md rounded-lg overflow-hidden shadow-sm">
+					<img src="https://masgud.com/assets/images/products/large/${item.image}" class="w-full h-full object-cover">
+					<div class="p-2 text-sm text-gray-700 text-center">
+					${item.code}
+					</div>
+				</div>
+				`;
+			});
+
+			renderPagination(totalPages);
+		}
+
+		// PAGINATION
+		function renderPagination(totalPages) {
+			const pagination = document.getElementById('pagination');
+
+			pagination.innerHTML = '';
+
+			if (totalPages <= 1) return;
+
+			if (currentPage > 1) {
+				pagination.innerHTML += `
+				<button onclick="changePage(${currentPage - 1})" class="px-3 py-1 bg-gray-200 border border-gray-200 rounded">
+					Sebelumnya
+				</button>
+				`;
+			}
+
+			for (let i = 1; i <= totalPages; i++) {
+				pagination.innerHTML += `
+				<button onclick="changePage(${i})"
+					class="px-3 py-1 border rounded ${i === currentPage ? 'bg-blue-500 border border-blue-600 text-white' : 'bg-gray-200 border border-gray-200'}">
+					${i}
+				</button>
+				`;
+			}
+
+			if (currentPage < totalPages) {
+				pagination.innerHTML += `
+				<button onclick="changePage(${currentPage + 1})" class="px-3 py-1 bg-gray-200 border border-gray-200 rounded">
+					Berikutnya
+				</button>
+				`;
+			}
+		}
+
+		// CHANGE PAGE
+		function changePage(page) {
+			currentPage = page;
+			renderPage();
+		}
+
+		// SUBMIT
+		document.getElementById('searchForm').addEventListener('submit', function(e) {
+			e.preventDefault();
+
+			// clear result
+			document.getElementById('result').innerHTML = '';
+			document.getElementById('pagination').innerHTML = '';
+
+			const inputEl = document.getElementById('searchInput');
+			const errorEl = document.getElementById('errorMsg');
+
+			const keyword = inputEl.value.trim();
+			const exact = document.getElementById('exactMatch').checked;
+
+			// 🔴 VALIDASI MIN 3 KARAKTER
+			if (keyword.length < 3) {
+				errorEl.classList.remove('hidden');
+				return;
+			} else {
+				errorEl.classList.add('hidden');
+			}
+
+			const results = search(keyword, exact);
+
+			// 🔥 FLATTEN (FIX)
+			flatResults = [];
+
+			results.forEach(item => {
+				const images = data[item.original];
+
+				images.forEach(img => {
+					flatResults.push({
+						code: item.original,
+						image: img
+					});
+				});
+			});
+
+			currentPage = 1;
+			renderPage();
+		});
+
+		document.getElementById('searchInput').addEventListener('input', function() {
+			const errorEl = document.getElementById('errorMsg');
+
+			if (this.value.trim().length >= 3) {
+				errorEl.classList.add('hidden');
+			}
+		});
+
+	</script>
+
+	
+
+</body>
+</html>
