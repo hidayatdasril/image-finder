@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Cari Gambar</title>
+	<title>Image Finder | Hidayat Dasril</title>
 
 	<link href="./css/output.css" rel="stylesheet">
 		
@@ -15,6 +15,7 @@
 <body class="bg-white min-h-screen flex items-center justify-center py-4">
 
 	<div class="text-center w-full max-w-2xl px-8">
+		
 		<!-- logo -->
 		<h1 class="text-7xl font-medium mx-auto flex w-fit mb-6">
 			<span class="text-blue-500 text-shadow-sm">G</span>
@@ -47,9 +48,10 @@
 			<label for="exactMatch">Temukan kode yang sama persis</label>
 		</div>
 
-		
+		<!-- RESULT	 -->
 		<div id="result" class="w-full max-w-5xl mt-10 space-y-4"></div>
 		
+		<!-- VALIDATION -->
 		<p id="errorMsg" class="text-red-500 text-sm mt-6 hidden">Minimal 3 karakter untuk pencarian</p>
 
 		<!-- PAGINATION -->
@@ -189,7 +191,7 @@
 			const keyword = inputEl.value.trim();
 			const exact = document.getElementById('exactMatch').checked;
 
-			// 🔴 VALIDASI MIN 3 KARAKTER
+			// VALIDASI MIN 3 KARAKTER
 			if (keyword.length < 3) {
 				errorEl.classList.remove('hidden');
 				return;
@@ -199,7 +201,7 @@
 
 			const results = search(keyword, exact);
 
-			// 🔥 FLATTEN (FIX)
+			// FLATTEN (FIX)
 			flatResults = [];
 
 			results.forEach(item => {
@@ -226,8 +228,5 @@
 		});
 
 	</script>
-
-	
-
 </body>
 </html>
