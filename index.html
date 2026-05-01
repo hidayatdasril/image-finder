@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Image Finder | Hidayat Dasril</title>
 
-	<link href="./css/output.css?v=123" rel="stylesheet">
+	<link href="./css/output.css" rel="stylesheet">
 		
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -156,7 +156,7 @@
 			for (let i = 1; i <= totalPages; i++) {
 				pagination.innerHTML += `
 				<button onclick="changePage(${i})"
-					class="px-3 py-1 border rounded ${i === currentPage ? 'bg-blue-500 border-2 border-blue-500 text-white' : 'bg-gray-100 border-gray-100 border-2 hover:border-blue-500'}">
+					class="px-3 py-1 border-2 rounded ${i === currentPage ? 'bg-blue-500 border-blue-500 text-white' : 'bg-gray-100 border-gray-100 hover:border-blue-500'}">
 					${i}
 				</button>
 				`;
